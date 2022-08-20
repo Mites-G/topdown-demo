@@ -1,7 +1,7 @@
-import { Physics } from "phaser";
+import { Physics } from "phaser"
 
 export class Actor extends Physics.Arcade.Sprite {
-  protected hp = 100;
+  protected hp = 100
 
   constructor(
     scene: Phaser.Scene,
@@ -10,12 +10,12 @@ export class Actor extends Physics.Arcade.Sprite {
     texture: string,
     frame?: string | number
   ) {
-    super(scene, x, y, texture, frame);
+    super(scene, x, y, texture, frame)
 
-    scene.add.existing(this);
-    scene.physics.add.existing(this);
+    scene.add.existing(this)
+    scene.physics.add.existing(this)
 
-    this.getBody().setCollideWorldBounds(true);
+    this.getBody().setCollideWorldBounds(true)
   }
 
   public getDamage(value?: number): void {
@@ -27,28 +27,28 @@ export class Actor extends Physics.Arcade.Sprite {
       alpha: 0.5,
       onStart: () => {
         if (value) {
-          this.hp = this.hp - value;
+          this.hp = this.hp - value
         }
       },
       onComplete: () => {
-        this.setAlpha(1);
+        this.setAlpha(1)
       },
-    });
+    })
   }
 
   public getHPValue(): number {
-    return this.hp;
+    return this.hp
   }
 
   protected checkFlip(): void {
     if (this.body.velocity.x < 0) {
-      this.scaleX = -1;
+      this.scaleX = -1
     } else {
-      this.scaleX = 1;
+      this.scaleX = 1
     }
   }
 
   protected getBody(): Physics.Arcade.Body {
-    return this.body as Physics.Arcade.Body;
+    return this.body as Physics.Arcade.Body
   }
 }
