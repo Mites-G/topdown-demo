@@ -8,6 +8,7 @@ export class Enemy extends Actor {
   private target: Player
   private AGRESSOR_RADIUS = 100
   private attackHandler: () => void
+  private takeDamage: () => void
 
   constructor(
     scene: Scene,
@@ -15,7 +16,7 @@ export class Enemy extends Actor {
     y: number,
     texture: string,
     target: Player,
-    frame?: string | number
+    frame?: string | number,
   ) {
     super(scene, x, y, texture, frame)
     this.target = target
@@ -24,7 +25,7 @@ export class Enemy extends Actor {
       if (
         Math.Distance.BetweenPoints(
           { x: this.x, y: this.y },
-          { x: this.target.x, y: this.target.y }
+          { x: this.target.x, y: this.target.y },
         ) < this.target.width
       ) {
         this.getDamage()
@@ -36,6 +37,14 @@ export class Enemy extends Actor {
       }
     }
 
+    this.takeDamage = () => {
+      this.getDamage()
+      this.disableBody(true, false)
+
+      this.scene.time.delayedCall(300, () => {
+        this.destroy()
+      })
+    }
     // ADD TO SCENE
     scene.add.existing(this)
     scene.physics.add.existing(this)
@@ -47,10 +56,7 @@ export class Enemy extends Actor {
     // EVENTS
     this.scene.game.events.on(EVENTS_NAME.attack, this.attackHandler, this)
     this.on("destroy", () => {
-      this.scene.game.events.removeListener(
-        EVENTS_NAME.attack,
-        this.attackHandler
-      )
+      this.scene.game.events.removeListener(EVENTS_NAME.attack, this.attackHandler)
     })
   }
 
@@ -58,7 +64,7 @@ export class Enemy extends Actor {
     if (
       Math.Distance.BetweenPoints(
         { x: this.x, y: this.y },
-        { x: this.target.x, y: this.target.y }
+        { x: this.target.x, y: this.target.y },
       ) < this.AGRESSOR_RADIUS
     ) {
       this.getBody().setVelocityX(this.target.x - this.x)

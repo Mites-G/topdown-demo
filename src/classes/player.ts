@@ -1,7 +1,9 @@
 import { Input, Scene } from "phaser"
+import { Level1 } from "src/scenes"
 
 import { EVENTS_NAME, GameStatus } from "../consts"
 import { Actor } from "./actor"
+import { Enemy } from "./enemy"
 import { Text } from "./text"
 
 export class Player extends Actor {
@@ -12,34 +14,71 @@ export class Player extends Actor {
   private keySpace: Input.Keyboard.Key
   private hpValue: Text
 
+  private reticle: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
+
   constructor(scene: Scene, x: number, y: number) {
     super(scene, x, y, "king")
 
-    // KEYS
     this.keyW = this.scene.input.keyboard.addKey("W")
     this.keyA = this.scene.input.keyboard.addKey("A")
     this.keyS = this.scene.input.keyboard.addKey("S")
     this.keyD = this.scene.input.keyboard.addKey("D")
+
     this.keySpace = this.scene.input.keyboard.addKey(32)
+
+    this.reticle = this.scene.physics.add.sprite(800, 700, "ball")
+
     this.keySpace.on("down", (event: KeyboardEvent) => {
       this.anims.play("attack", true)
       this.scene.game.events.emit(EVENTS_NAME.attack)
     })
 
-    this.hpValue = new Text(
+    const playerBullets = this.scene.physics.add.group({
+      classType: Bullet,
+      runChildUpdate: true,
+    })
+
+    this.reticle.setScale(0.2, 0.2)
+    console.log(this.scene)
+
+    const sceneData: any = this.scene
+
+    window.game.canvas.addEventListener("mousedown", function () {
+      window.game.input.mouse.requestPointerLock()
+    })
+    this.scene.input.on(
+      "pointerdown",
+      (pointer: any, time: any, lastFired: any) => {
+        // if (this.active === false) return;
+
+        const bullet = playerBullets.get().setActive(true).setVisible(true)
+        if (bullet) {
+          bullet.fire(this, this.reticle)
+          this.scene.physics.add.collider(sceneData.enemies, bullet, enemyHitCallback)
+        }
+      },
       this.scene,
-      this.x,
-      this.y - this.height,
-      this.hp.toString()
     )
+
+    // Move reticle upon locked pointer move
+    this.scene.input.on(
+      "pointermove",
+      (pointer: any) => {
+        if (this.scene.input.mouse.locked) {
+          this.reticle.x += pointer.movementX
+          this.reticle.y += pointer.movementY
+        }
+      },
+      this,
+    )
+
+    this.hpValue = new Text(this.scene, this.x, this.y - this.height, this.hp.toString())
       .setFontSize(12)
       .setOrigin(0.8, 0.5)
 
-    // PHYSICS
     this.getBody().setSize(30, 30)
     this.getBody().setOffset(8, 0)
 
-    // ANIMATIONS
     this.initAnimations()
 
     this.on("destroy", () => {
@@ -76,6 +115,8 @@ export class Player extends Actor {
 
     this.hpValue.setPosition(this.x, this.y - this.height * 0.4)
     this.hpValue.setOrigin(0.8, 0.5)
+
+    this.constrainReticle()
   }
 
   private initAnimations(): void {
@@ -104,6 +145,85 @@ export class Player extends Actor {
 
     if (this.hp <= 0) {
       this.scene.game.events.emit(EVENTS_NAME.gameEnd, GameStatus.LOSE)
+    }
+  }
+
+  // Ensures reticle does not move offscreen
+  private constrainReticle() {
+    var distX = this.reticle.x - this.x // X distance between player & reticle
+    var distY = this.reticle.y - this.y // Y distance between player & reticle
+
+    // Ensures reticle cannot be moved offscreen (player follow)
+    if (distX > 800) this.reticle.x = this.x + 800
+    else if (distX < -800) this.reticle.x = this.x - 800
+
+    if (distY > 600) this.reticle.y = this.y + 600
+    else if (distY < -600) this.reticle.y = this.y - 600
+  }
+}
+
+const enemyHitCallback = (enemyHit: any, bulletHit: any) => {
+  enemyHit.takeDamage()
+  // Reduce health of enemy
+  // if (bulletHit.active === true && enemyHit.active === true)
+  // {
+  //     enemyHit.health = enemyHit.health - 1;
+  //     console.log("Enemy hp: ", enemyHit.health);
+
+  //     // Kill enemy if health <= 0
+  //     if (enemyHit.health <= 0)
+  //     {
+  //        enemyHit.setActive(false).setVisible(false);
+  //     }
+
+  //     // Destroy bullet
+  //     bulletHit.setActive(false).setVisible(false);
+  // }
+}
+class Bullet extends Phaser.Physics.Arcade.Sprite {
+  private speed = 1
+  private born = 0
+  private direction = 0
+  private xSpeed = 0
+  private ySpeed = 0
+
+  constructor(scene: Scene) {
+    super(scene, 0, 0, "bullet")
+    // Phaser.GameObjects.Image.call(this, scene, 0, 0, "bullet");
+    this.speed = 0.2
+    this.born = 0
+    this.direction = 0
+    this.xSpeed = 0
+    this.ySpeed = 0
+    // this.setSize(12, 12);
+  }
+  // Fires a bullet from the player to the reticle
+  fire(shooter: any, target: any): void {
+    this.setScale(0.5, 0.5)
+    this.setPosition(shooter.x, shooter.y) // Initial position
+    this.direction = Math.atan((target.x - this.x) / (target.y - this.y))
+
+    // Calculate X and y velocity of bullet to moves it from shooter to target
+    if (target.y >= this.y) {
+      this.xSpeed = this.speed * Math.sin(this.direction)
+      this.ySpeed = this.speed * Math.cos(this.direction)
+    } else {
+      this.xSpeed = -this.speed * Math.sin(this.direction)
+      this.ySpeed = -this.speed * Math.cos(this.direction)
+    }
+
+    // this.rotation = shooter.rotation; // angle bullet with shooters rotation
+    this.rotation = Phaser.Math.Angle.Between(shooter.x, shooter.y, target.x, target.y)
+    this.born = 0 // Time since new bullet spawned
+  }
+
+  update(time: any, delta: any): void {
+    this.x += this.xSpeed * delta
+    this.y += this.ySpeed * delta
+    this.born += delta
+    if (this.born > 1800) {
+      this.setActive(false)
+      this.setVisible(false)
     }
   }
 }
