@@ -2,7 +2,7 @@ import { defineConfig } from "vite"
 import replace from "@rollup/plugin-replace"
 
 export default defineConfig({
-  base: "/topdown-shooter/",
+  base: "/topdown-demo/",
   build: {
     rollupOptions: {
       plugins: [
