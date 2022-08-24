@@ -1,5 +1,5 @@
 import { Input, Scene } from "phaser"
-import { Level1 } from "src/scenes"
+import { Level1 } from "../scenes"
 
 import { EVENTS_NAME, GameStatus } from "../consts"
 import { Actor } from "./actor"
@@ -26,7 +26,7 @@ export class Player extends Actor {
 
     this.keySpace = this.scene.input.keyboard.addKey(32)
 
-    this.reticle = this.scene.physics.add.sprite(800, 700, "ball")
+    this.reticle = this.scene.physics.add.sprite(100, 100, "ball")
 
     this.keySpace.on("down", (event: KeyboardEvent) => {
       this.anims.play("attack", true)

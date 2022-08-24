@@ -6,7 +6,7 @@ export class LoadingScene extends Scene {
   }
 
   preload(): void {
-    this.load.baseURL = "assets/"
+    this.load.baseURL = "src/assets/"
 
     this.load.image("ball", "sprites/ball.png")
     this.load.image("bullet", "sprites/bullet6.png")
