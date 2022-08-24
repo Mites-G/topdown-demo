@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES5",
+    "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "types": ["vite/client"],
     "allowJs": false,
     "skipLibCheck": false,
     "esModuleInterop": false,
+    "sourceMap": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
