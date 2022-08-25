@@ -1,6 +1,6 @@
 # Top down demo
-Usando PhaserJS, Typescript e Vite
+PhaserJS, Typescript and Vite
 
 Install: ``yarn``  
-Run: ``yarn dev``
+Run: ``yarn dev``    
 Build: ``yarn build``
