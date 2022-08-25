@@ -59,7 +59,6 @@ export class Player extends Actor {
       this.scene,
     )
 
-    // Move reticle upon locked pointer move
     this.scene.input.on(
       "pointermove",
       (pointer: any) => {
@@ -115,7 +114,7 @@ export class Player extends Actor {
     this.hpValue.setPosition(this.x, this.y - this.height * 0.4)
     this.hpValue.setOrigin(0.8, 0.5)
 
-    this.constrainReticle()
+    // this.constrainReticle()
   }
 
   private initAnimations(): void {
@@ -147,18 +146,16 @@ export class Player extends Actor {
     }
   }
 
-  // Ensures reticle does not move offscreen
-  private constrainReticle() {
-    var distX = this.reticle.x - this.x // X distance between player & reticle
-    var distY = this.reticle.y - this.y // Y distance between player & reticle
+  // private constrainReticle() {
+  //   var distX = this.reticle.x - this.x
+  //   var distY = this.reticle.y - this.y
 
-    // Ensures reticle cannot be moved offscreen (player follow)
-    if (distX > 800) this.reticle.x = this.x + 800
-    else if (distX < -800) this.reticle.x = this.x - 800
+  //   if (distX > 800) this.reticle.x = this.x + 800
+  //   else if (distX < -800) this.reticle.x = this.x - 800
 
-    if (distY > 600) this.reticle.y = this.y + 600
-    else if (distY < -600) this.reticle.y = this.y - 600
-  }
+  //   if (distY > 600) this.reticle.y = this.y + 600
+  //   else if (distY < -600) this.reticle.y = this.y - 600
+  // }
 }
 
 const enemyHitCallback = (enemyHit: any, bulletHit: any) => {
@@ -174,21 +171,19 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
 
   constructor(scene: Scene) {
     super(scene, 0, 0, "bullet")
-    // Phaser.GameObjects.Image.call(this, scene, 0, 0, "bullet");
+
     this.speed = 0.2
     this.born = 0
     this.direction = 0
     this.xSpeed = 0
     this.ySpeed = 0
-    // this.setSize(12, 12);
   }
-  // Fires a bullet from the player to the reticle
+
   fire(shooter: any, target: any): void {
     this.setScale(0.5, 0.5)
-    this.setPosition(shooter.x, shooter.y) // Initial position
+    this.setPosition(shooter.x, shooter.y)
     this.direction = Math.atan((target.x - this.x) / (target.y - this.y))
 
-    // Calculate X and y velocity of bullet to moves it from shooter to target
     if (target.y >= this.y) {
       this.xSpeed = this.speed * Math.sin(this.direction)
       this.ySpeed = this.speed * Math.cos(this.direction)
@@ -197,9 +192,8 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
       this.ySpeed = -this.speed * Math.cos(this.direction)
     }
 
-    // this.rotation = shooter.rotation; // angle bullet with shooters rotation
     this.rotation = Phaser.Math.Angle.Between(shooter.x, shooter.y, target.x, target.y)
-    this.born = 0 // Time since new bullet spawned
+    this.born = 0
   }
 
   update(time: any, delta: any): void {

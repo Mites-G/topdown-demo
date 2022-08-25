@@ -50,15 +50,13 @@ export class Enemy extends Actor {
       this.getDamage(25)
       this.hpValue.setText(this.hp.toString())
     }
-    // ADD TO SCENE
+
     scene.add.existing(this)
     scene.physics.add.existing(this)
 
-    // PHYSICS MODEL
     this.getBody().setSize(16, 16)
     this.getBody().setOffset(0, 0)
 
-    // EVENTS
     this.scene.game.events.on(EVENTS_NAME.attack, this.attackHandler, this)
     this.on("destroy", () => {
       this.scene.game.events.removeListener(EVENTS_NAME.attack, this.attackHandler)
@@ -88,9 +86,6 @@ export class Enemy extends Actor {
       this.getBody().setVelocity(0)
     }
   }
-
-  // update(): void {
-  // }
 
   public setTarget(target: Player): void {
     this.target = target
