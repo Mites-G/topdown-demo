@@ -1,5 +1,6 @@
 # Top down demo
-Usando PhaserJS, Typescript e Webpack
+Usando PhaserJS, Typescript e Vite
 
-Pra instalar: ``yarn install``  
-Pra rodar: ``yarn dev``  
+Install: ``yarn``  
+Run: ``yarn dev``
+Build: ``yarn build``
