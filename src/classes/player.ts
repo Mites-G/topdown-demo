@@ -27,6 +27,7 @@ export class Player extends Actor {
     this.keySpace = this.scene.input.keyboard.addKey(32)
 
     this.reticle = this.scene.physics.add.sprite(100, 100, "ball")
+    this.reticle.setDepth(1)
 
     this.keySpace.on("down", (event: KeyboardEvent) => {
       this.anims.play("attack", true)
