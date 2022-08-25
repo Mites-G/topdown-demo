@@ -1,6 +1,6 @@
 import Phaser from "phaser"
 
-interface Window {
+export interface Window {
   sizeChanged: () => void
   game: Phaser.Game
 }

@@ -38,8 +38,7 @@ export class Player extends Actor {
       runChildUpdate: true,
     })
 
-    this.reticle.setScale(0.2, 0.2)
-    console.log(this.scene)
+    this.reticle.setOrigin(0.5, 0.5).setDisplaySize(15, 15)
 
     const sceneData: any = this.scene
 
@@ -164,21 +163,7 @@ export class Player extends Actor {
 
 const enemyHitCallback = (enemyHit: any, bulletHit: any) => {
   enemyHit.takeDamage()
-  // Reduce health of enemy
-  // if (bulletHit.active === true && enemyHit.active === true)
-  // {
-  //     enemyHit.health = enemyHit.health - 1;
-  //     console.log("Enemy hp: ", enemyHit.health);
-
-  //     // Kill enemy if health <= 0
-  //     if (enemyHit.health <= 0)
-  //     {
-  //        enemyHit.setActive(false).setVisible(false);
-  //     }
-
-  //     // Destroy bullet
-  //     bulletHit.setActive(false).setVisible(false);
-  // }
+  bulletHit.destroy()
 }
 class Bullet extends Phaser.Physics.Arcade.Sprite {
   private speed = 1
