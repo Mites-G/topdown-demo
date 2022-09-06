@@ -12,7 +12,7 @@ export const gameConfig: GameConfigExtended = {
   parent: "game",
   backgroundColor: "#351f1b",
   scale: {
-    mode: Scale.ScaleModes.NONE,
+    mode: Scale.ScaleModes.FIT,
     width: window.innerWidth,
     height: window.innerHeight,
   },
@@ -28,7 +28,7 @@ export const gameConfig: GameConfigExtended = {
   },
   callbacks: {
     postBoot: () => {
-      window.sizeChanged()
+      // window.sizeChanged()
     },
   },
   canvasStyle: `display: block; width: 100%; height: 100%;`,
@@ -40,19 +40,19 @@ export const gameConfig: GameConfigExtended = {
   winScore: 40,
 }
 
-window.sizeChanged = () => {
-  if (window.game.isBooted) {
-    setTimeout(() => {
-      window.game.scale.resize(window.innerWidth, window.innerHeight)
+// window.sizeChanged = () => {
+//   if (window.game.isBooted) {
+//     setTimeout(() => {
+//       window.game.scale.resize(window.innerWidth, window.innerHeight)
 
-      window.game.canvas.setAttribute(
-        "style",
-        `display: block; width: ${window.innerWidth}px; height: ${window.innerHeight}px;`
-      )
-    }, 100)
-  }
-}
+//       window.game.canvas.setAttribute(
+//         "style",
+//         `display: block; width: ${window.innerWidth}px; height: ${window.innerHeight}px;`
+//       )
+//     }, 100)
+//   }
+// }
 
-window.onresize = () => window.sizeChanged()
+// window.onresize = () => window.sizeChanged()
 
 window.game = new Game(gameConfig)

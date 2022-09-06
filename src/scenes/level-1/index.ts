@@ -18,13 +18,27 @@ export class Level1 extends Scene {
   }
 
   create(): void {
-    this.initMap()
-    this.player = new Player(this, 100, 100)
-    this.initChests()
-    this.initEnemies()
-    this.initCamera()
+    // this.initMap()
+    this.player = new Player(this, 0, 0)
+    // this.initChests()
+    // this.initEnemies()
 
-    this.physics.add.collider(this.player, this.wallsLayer)
+    this.map = this.add.tilemap("map")
+
+    var tileset1 = this.map.addTilesetImage("iso-64x64-outside", "tiles")
+    var tileset2 = this.map.addTilesetImage("iso-64x64-building", "tiles2")
+
+    var layer1 = this.map.createLayer("Tile Layer 1", [tileset1, tileset2])
+    var layer2 = this.map.createLayer("Tile Layer 2", [tileset1, tileset2])
+    var layer3 = this.map.createLayer("Tile Layer 3", [tileset1, tileset2])
+    var layer4 = this.map.createLayer("Tile Layer 4", [tileset1, tileset2])
+    var layer5 = this.map.createLayer("Tile Layer 5", [tileset1, tileset2])
+
+    // this.physics.add.collider(this.player, layer1)
+
+    this.physics.world.setBounds(-500, 0, layer1.width, layer1.height)
+
+    this.initCamera()
   }
 
   update(): void {
@@ -37,6 +51,7 @@ export class Level1 extends Scene {
       tileWidth: 16,
       tileHeight: 16,
     })
+
     this.tileset = this.map.addTilesetImage("dungeon", "tiles")
     this.groundLayer = this.map.createLayer("Ground", this.tileset, 0, 0)
     this.wallsLayer = this.map.createLayer("Walls", this.tileset, 0, 0)
@@ -91,7 +106,7 @@ export class Level1 extends Scene {
   private initCamera(): void {
     this.cameras.main.setSize(this.game.scale.width, this.game.scale.height)
     this.cameras.main.startFollow(this.player, true, 0.09, 0.09)
-    this.cameras.main.setZoom(2)
+    this.cameras.main.setZoom(1.4)
   }
 
   private showDebugWalls(): void {
